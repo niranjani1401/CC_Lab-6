@@ -1,8 +1,11 @@
 #include <iostream>
-#include <cstdlib>
+#include <unistd.h>
 
 int main() {
-    std::cout << "Content-type: text/plain\r\n\r\n";
-    std::cout << "Hello from backend container!" << std::endl;
+    while(true) {
+        std::cout << "Backend running..." << std::endl;
+        sleep(5);
+    }
     return 0;
 }
+
