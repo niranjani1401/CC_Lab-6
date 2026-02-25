@@ -3,6 +3,12 @@ pipeline {
 
     stages {
 
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
         stage('Build Backend Image') {
             steps {
                 sh 'docker build -t backend-app ./backend'
@@ -19,17 +25,29 @@ pipeline {
             }
         }
 
+        stage('Build Nginx Image') {
+            steps {
+                sh 'docker build -t custom-nginx ./nginx'
+            }
+        }
+
         stage('Run Nginx') {
             steps {
                 sh '''
                 docker rm -f nginx || true
                 docker run -d --name nginx -p 80:80 \
---link backend1 --link backend2 \
--v $(pwd)/nginx/default.conf:/etc/nginx/conf.d/default.conf \
-nginx
-
+                --link backend1 \
+                --link backend2 \
+                custom-nginx
                 '''
             }
         }
     }
+
+    post {
+        always {
+            sh 'docker ps'
+        }
+    }
 }
+
